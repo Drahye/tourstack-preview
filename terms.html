@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Terms of Service — TourStack by Ckrowd</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet" />
+<style>
+  :root, .dark{ --bg:#0a0a0a; --surface:#161616; --text:#ffffff; --muted:#a8a8a8; --border:rgba(255,255,255,.07); --hair:rgba(255,255,255,.10); }
+  .light{ --bg:#ffffff; --surface:#f5f4f2; --text:#0c0c0c; --muted:#5c5c5c; --border:rgba(0,0,0,.07); --hair:rgba(0,0,0,.10); }
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{ margin:0; background:var(--bg); color:var(--text); font-family:'Geist',system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased; transition:background .4s ease,color .4s ease; }
+  .mono{ font-family:'Geist Mono',monospace; }
+  .display{ letter-spacing:-0.03em; line-height:1.02; }
+  .eyebrow{ font-size:11px; letter-spacing:.24em; text-transform:uppercase; font-weight:600; }
+  a{ color:inherit; }
+  .shell{ max-width:760px; margin:0 auto; padding:0 24px; }
+  header{ position:sticky; top:0; z-index:20; backdrop-filter:blur(16px);
+    background:color-mix(in srgb, var(--bg) 78%, transparent); border-bottom:1px solid var(--border); }
+  .navrow{ display:flex; align-items:center; justify-content:space-between; height:64px; }
+  .brand{ display:flex; align-items:center; gap:10px; text-decoration:none; }
+  .brand img{ height:30px; width:30px; object-fit:contain; }
+  .brand .name{ display:flex; flex-direction:column; line-height:1; }
+  .brand .name b{ font-weight:600; font-size:17px; }
+  .brand .name small{ font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); margin-top:3px; }
+  .back{ display:inline-flex; align-items:center; gap:8px; text-decoration:none; color:var(--muted); font-size:14px;
+    padding:8px 14px; border:1px solid var(--hair); border-radius:999px; transition:color .25s, border-color .25s; }
+  .back:hover{ color:var(--text); border-color:var(--text); }
+  .hero{ padding:72px 0 40px; border-bottom:1px solid var(--border); }
+  h1{ font-size:clamp(2.2rem,6vw,3.4rem); font-weight:600; margin:14px 0 0; }
+  .updated{ color:var(--muted); margin-top:14px; font-size:14px; }
+  main{ padding:48px 0 96px; }
+  section{ margin-bottom:38px; }
+  h2{ font-size:1.15rem; font-weight:600; margin:0 0 12px; display:flex; gap:12px; align-items:baseline; }
+  h2 .n{ color:#FF5A30; font-size:13px; }
+  p{ color:var(--muted); line-height:1.75; margin:0; font-size:15.5px; }
+  p a{ color:#FF5A30; text-decoration:none; }
+  p a:hover{ text-decoration:underline; }
+  footer{ border-top:1px solid var(--border); padding:28px 0; color:var(--muted); font-size:13px; }
+  .toggle{ background:none; border:1px solid var(--hair); color:var(--muted); height:36px; width:36px; border-radius:999px;
+    display:grid; place-items:center; cursor:pointer; transition:color .25s; }
+  .toggle:hover{ color:var(--text); }
+</style>
+</head>
+<body>
+<header>
+  <div class="shell navrow">
+    <a class="brand" href="tourstack-landing.html">
+      <img src="ckrowd-tourstack/public/ckrowd-logo.png" alt="" />
+      <span class="name"><b>TourStack</b><small>by Ckrowd</small></span>
+    </a>
+    <div style="display:flex;align-items:center;gap:10px">
+      <button class="toggle" id="theme" aria-label="Toggle theme">
+        <svg class="ico-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+        <svg class="ico-sun" style="display:none" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.5M12 19.5V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.5M19.5 12H22M4.2 19.8 6 18M18 6l1.8-1.8"/></svg>
+      </button>
+      <a class="back" href="tourstack-landing.html"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="m15 18-6-6 6-6"/></svg> Back</a>
+    </div>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="shell">
+    <span class="eyebrow" style="color:#FF5A30">Legal</span>
+    <h1 class="display">Terms of Service</h1>
+    <div class="updated">Last updated: May 2026</div>
+  </div>
+</div>
+
+<main>
+  <div class="shell">
+    <section>
+      <h2><span class="n mono">01</span> Acceptance of Terms</h2>
+      <p>By accessing or using TourStack by Ckrowd, you agree to these Terms of Service and any policies referenced in them. If you are using TourStack on behalf of a company or organization, you confirm that you have authority to bind that organization. If you do not agree, you may not use the platform.</p>
+    </section>
+    <section>
+      <h2><span class="n mono">02</span> The TourStack Platform</h2>
+      <p>TourStack is a B2B platform operated by Ckrowd Africa Technologies for the Pan-African live events ecosystem. The platform supports tour discovery, Expressions of Interest, promoter and venue onboarding, workforce registration, service-provider workflows, artist-management coordination, insurance pathways, financing workflows, and related ecosystem services.</p>
+    </section>
+    <section>
+      <h2><span class="n mono">03</span> Eligibility and Accounts</h2>
+      <p>You must provide accurate, current, and complete information when registering, submitting forms, uploading credentials, or representing a business, venue, artist roster, workforce profile, or financing request. You are responsible for keeping your account credentials secure and for activity that occurs under your account.</p>
+    </section>
+    <section>
+      <h2><span class="n mono">04</span> Verification and Platform Decisions</h2>
+      <p>Ckrowd may review, verify, approve, reject, pause, or remove accounts, EOIs, listings, credentials, financing requests, workforce profiles, or partner submissions where information is incomplete, inaccurate, unverifiable, suspicious, or inconsistent with platform standards. Platform access does not guarantee tour allocation, financing approval, insurance coverage, certification, or commercial engagement.</p>
+    </section>
+    <section>
+      <h2><span class="n mono">05</span> Acceptable Use</h2>
+      <p>You agree not to misuse TourStack, interfere with platform security, submit false or misleading information, impersonate another person or entity, upload unlawful or infringing material, scrape or reverse engineer the platform, or use TourStack to facilitate fraud, harassment, discrimination, unsafe events, or unlawful transactions.</p>
+    </section>
+    <section>
+      <h2><span class="n mono">06</span> Commercial Relationships</h2>
+      <p>TourStack may help stakeholders discover opportunities and exchange information, but commercial terms between promoters, artists, vendors, financiers, insurers, venues, and workforce members may be governed by separate agreements. Unless expressly stated in a signed agreement, Ckrowd is not a party to those separate commercial commitments.</p>
+    </section>
+    <section>
+      <h2><span class="n mono">07</span> Intellectual Property</h2>
+      <p>All TourStack branding, platform design, software, content, workflows, scoring logic, and related materials are owned by Ckrowd Africa Technologies or its licensors. You retain ownership of materials you submit, but you grant Ckrowd a limited right to use them to operate, verify, display, route, and improve the platform.</p>
+    </section>
+    <section>
+      <h2><span class="n mono">08</span> Availability and Changes</h2>
+      <p>We may update, suspend, restrict, or discontinue parts of TourStack at any time, including features, forms, eligibility criteria, partner workflows, pricing, and verification processes. We aim to keep the platform reliable, but we do not guarantee uninterrupted or error-free service.</p>
+    </section>
+    <section>
+      <h2><span class="n mono">09</span> Limitation of Liability</h2>
+      <p>To the fullest extent permitted by law, TourStack is provided on an as-is and as-available basis. Ckrowd will not be liable for indirect, incidental, special, consequential, punitive, or loss-of-profit damages arising from platform use, stakeholder decisions, third-party services, event outcomes, or unavailable features.</p>
+    </section>
+    <section>
+      <h2><span class="n mono">10</span> Contact</h2>
+      <p>For terms-related enquiries, visit our contact page or email <a href="mailto:legal@ckrowd.africa">legal@ckrowd.africa</a>.</p>
+    </section>
+  </div>
+</main>
+
+<footer>
+  <div class="shell" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px">
+    <span>© 2026 Ckrowd · TourStack Infrastructure.</span>
+    <span><a href="privacy.html" style="color:#FF5A30;text-decoration:none">Privacy Policy</a></span>
+  </div>
+</footer>
+
+<script>
+  const root = document.documentElement;
+  const set = (t) => {
+    root.classList.toggle("dark", t === "dark"); root.classList.toggle("light", t === "light");
+    document.querySelector(".ico-moon").style.display = t === "light" ? "none" : "block";
+    document.querySelector(".ico-sun").style.display = t === "light" ? "block" : "none";
+    try { localStorage.setItem("ts-theme", t); } catch (e) {}
+  };
+  let s; try { s = localStorage.getItem("ts-theme"); } catch (e) {}
+  set(s || (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"));
+  document.getElementById("theme").addEventListener("click", () => set(root.classList.contains("dark") ? "light" : "dark"));
+</script>
+</body>
+</html>

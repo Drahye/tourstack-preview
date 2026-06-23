@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TourStack — Africa's Live Entertainment Infrastructure</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500;600&family=Archivo+Black&display=swap" rel="stylesheet" />
+
+<script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+<script>
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          bg:       "var(--bg)",
+          surface:  "var(--surface)",
+          surface2: "var(--surface-2)",
+          ink:      "var(--text)",
+          muted:    "var(--muted)",
+          orange:   "#FF5A30",
+          ember:    "#ff7a52",
+          lime:     "#1DB954",
+        },
+        fontFamily: {
+          sans: ['"Geist"', "system-ui", "sans-serif"],
+          mono: ['"Geist Mono"', "ui-monospace", "monospace"],
+        },
+        maxWidth: { shell: "1760px" },
+      },
+    },
+  };
+</script>
+
+<style>
+  :root, .dark{
+    --bg:#0a0a0a; --surface:#161616; --surface-2:#202020;
+    --text:#ffffff; --muted:#a8a8a8; --hair:rgba(255,255,255,.10); --border:rgba(255,255,255,.07);
+  }
+  .light{
+    --bg:#ffffff; --surface:#f5f4f2; --surface-2:#ececea;
+    --text:#0c0c0c; --muted:#5c5c5c; --hair:rgba(0,0,0,.10); --border:rgba(0,0,0,.07);
+  }
+  :root{
+    --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+  }
+  html{ scroll-behavior:smooth; }
+  body{ background:var(--bg); color:var(--text); transition:background .5s ease, color .5s ease;
+    overflow-x:clip; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; }
+  ::selection{ background:#FF5A30; color:#fff; }
+
+  .hair{ border:1px solid var(--hair); }
+  .hair-b{ border-bottom:1px solid var(--border); }
+  .display{ font-family:'Archivo Black','Geist',sans-serif; font-weight:400; letter-spacing:-0.015em; line-height:1.02; }
+  .eyebrow{ font-size:11px; letter-spacing:.24em; text-transform:uppercase; font-weight:600; }
+  .mono{ font-family:'Geist Mono',monospace; }
+
+  /* fixed film-grain, never on scrolling content */
+  .grain{ position:fixed; inset:0; z-index:60; pointer-events:none; opacity:.04; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
+  /* flat card, single surface (Spotify): no double border */
+  .card{ background:var(--surface); border-radius:18px;
+    transition:transform .45s var(--ease-out), background .45s var(--ease-out), box-shadow .45s var(--ease-out); }
+  .card:hover{ transform:translateY(-5px); background:var(--surface-2);
+    box-shadow:0 24px 48px -28px rgba(0,0,0,.55); }
+
+  /* image card with title (Spotify "go deeper") */
+  .imgcard{ border-radius:18px; overflow:hidden; position:relative;
+    transition:transform .55s var(--ease-out), box-shadow .55s var(--ease-out); }
+  .imgcard img{ transition:transform .8s var(--ease-out); }
+  .imgcard:hover{ transform:translateY(-4px); box-shadow:0 32px 60px -34px rgba(0,0,0,.6); }
+  .imgcard:hover img{ transform:scale(1.06); }
+
+  /* reveal: vertical fade-up by default; directional variants animated by Motion */
+  .reveal{ opacity:0; transform:translateY(24px); filter:blur(5px);
+    transition:opacity .85s var(--ease-out), transform .85s var(--ease-out), filter .85s var(--ease-out); will-change:transform,opacity; }
+  .reveal-l{ transform:translateX(-52px); filter:none; }
+  .reveal-r{ transform:translateX(52px); filter:none; }
+  .reveal.in{ opacity:1; transform:none; filter:none; }
+
+  .btn-ico{ transition:transform .5s var(--ease-out); }
+  .group:hover .btn-ico{ transform:translate(3px,-2px) scale(1.06); }
+  .press{ transition:transform .16s var(--ease-out), background .3s ease, color .3s ease, border-color .3s ease; }
+  .press:active{ transform:scale(.97); }
+
+  /* accordion */
+  .faq-body{ display:grid; grid-template-rows:0fr; transition:grid-template-rows .42s var(--ease-drawer), opacity .3s ease; opacity:.3; }
+  .faq.open .faq-body{ grid-template-rows:1fr; opacity:1; }
+  .faq-body > div{ overflow:hidden; }
+  .faq .chev{ transition:transform .42s var(--ease-drawer); }
+  .faq.open .chev{ transform:rotate(45deg); }
+
+  #nav{ transition:transform .5s var(--ease-out), background .4s ease, border-color .4s ease, box-shadow .4s ease; }
+  .nav-solid{ background:color-mix(in srgb, var(--bg) 72%, transparent); backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
+    box-shadow:0 16px 40px -28px rgba(0,0,0,.7); }
+
+  #burger span{ transition:transform .4s var(--ease-out), opacity .3s ease; }
+  #burger.x span:nth-child(1){ transform:translateY(5px) rotate(45deg); }
+  #burger.x span:nth-child(2){ opacity:0; }
+  #burger.x span:nth-child(3){ transform:translateY(-5px) rotate(-45deg); }
+  #overlay{ transition:opacity .5s var(--ease-out), visibility .5s; }
+  #overlay a{ opacity:0; transform:translateY(26px); transition:opacity .6s var(--ease-out), transform .6s var(--ease-out); }
+  #overlay.show a{ opacity:1; transform:none; }
+
+  .marquee{ display:flex; width:max-content; animation:slide 58s linear infinite; }
+  .marquee-rev{ display:flex; width:max-content; animation:slide-rev 64s linear infinite; }
+  @keyframes slide{ to{ transform:translateX(-50%); } }
+  @keyframes slide-rev{ from{ transform:translateX(-50%); } to{ transform:translateX(0); } }
+  .fade-x{ -webkit-mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent); mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent); }
+
+  /* parallax: oversized media so translate never reveals edges */
+  .px-wrap{ overflow:hidden; }
+  .px-img{ position:absolute; inset:-14% 0; height:128%; width:100%; object-fit:cover; will-change:transform; }
+
+  /* lenis smooth scroll */
+  html.lenis, html.lenis body{ height:auto; }
+  .lenis.lenis-smooth{ scroll-behavior:auto !important; }
+  .lenis.lenis-smooth [data-lenis-prevent]{ overscroll-behavior:contain; }
+  .lenis.lenis-stopped{ overflow:hidden; }
+
+  /* scroll-pinned horizontal scroll (pinned by GSAP ScrollTrigger) */
+  .hpin-sticky{ height:100dvh; display:flex; flex-direction:column; justify-content:center; overflow:hidden; }
+  .htrack{ display:flex; gap:20px; will-change:transform; }
+  .hcard{ flex:0 0 auto; width:min(82vw,440px); }
+  @media (max-width:768px){
+    .hpin{ height:auto !important; }
+    .hpin-sticky{ height:auto; padding-top:6rem; padding-bottom:4rem; }
+    .htrack{ overflow-x:auto; scroll-snap-type:x mandatory; padding-bottom:1rem; -webkit-overflow-scrolling:touch; transform:none !important; }
+    .hcard{ scroll-snap-align:start; width:78vw; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .px-img{ position:absolute; inset:0; height:100%; transform:none !important; }
+    .hpin{ height:auto !important; } .hpin-sticky{ position:static; height:auto; }
+    .htrack{ transform:none !important; flex-wrap:wrap; }
+    .reveal,.btn-ico,.press,.faq-body,.faq .chev,#overlay a,.card,.imgcard img{ transition:opacity .2s ease !important; transform:none !important; filter:none !important; }
+    .reveal{ opacity:1; } .marquee{ animation:none; } html{ scroll-behavior:auto; }
+  }
+</style>
+</head>
+
+<body class="font-sans antialiased">
+<div class="grain"></div>
+
+<!-- ============ NAV ============ -->
+<header class="fixed top-0 inset-x-0 z-50 flex justify-center px-4">
+  <nav id="nav" class="mt-5 w-full max-w-6xl rounded-full hair pl-4 pr-2.5 sm:pl-6 h-16 flex items-center justify-between">
+    <a href="#top" class="flex items-center gap-2.5 shrink-0">
+      <img src="ckrowd-tourstack/public/ckrowd-logo.png" alt="TourStack" class="h-8 w-8 object-contain" />
+      <span class="flex flex-col leading-none">
+        <span class="font-semibold text-[18px] tracking-tight">TourStack</span>
+        <span class="text-[10.5px] tracking-[.14em] uppercase text-muted mt-0.5">by Ckrowd</span>
+      </span>
+    </a>
+    <div class="hidden md:flex items-center gap-8 text-[13.5px] text-muted">
+      <a href="#how" class="hover:text-ink transition-colors">The platform</a>
+      <a href="#ecosystem" class="hover:text-ink transition-colors">Ecosystem</a>
+      <a href="#explore" class="hover:text-ink transition-colors">Explore</a>
+      <a href="#faq" class="hover:text-ink transition-colors">FAQ</a>
+    </div>
+    <div class="flex items-center gap-1.5">
+      <button id="theme" class="press h-9 w-9 grid place-items-center rounded-full hair text-muted hover:text-ink" aria-label="Toggle theme">
+        <svg class="ico-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+        <svg class="ico-sun hidden" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.5M12 19.5V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.5M19.5 12H22M4.2 19.8 6 18M18 6l1.8-1.8"/></svg>
+      </button>
+      <a href="#" class="hidden lg:inline-flex text-[13.5px] text-muted hover:text-ink transition-colors px-3 py-2">Contact sales</a>
+      <a href="#join" class="group press hidden md:inline-flex items-center gap-2 bg-orange text-white font-medium text-[13.5px] pl-4 pr-2 py-2 rounded-full">
+        Join TourStack
+        <span class="btn-ico h-7 w-7 rounded-full bg-black/15 grid place-items-center">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg>
+        </span>
+      </a>
+      <button id="burger" class="md:hidden h-9 w-9 grid place-items-center gap-[5px] rounded-full hair" aria-label="Menu">
+        <span class="block h-[1.5px] w-4 bg-ink"></span>
+        <span class="block h-[1.5px] w-4 bg-ink"></span>
+        <span class="block h-[1.5px] w-4 bg-ink"></span>
+      </button>
+    </div>
+  </nav>
+</header>
+
+<div id="overlay" class="fixed inset-0 z-40 invisible opacity-0 backdrop-blur-2xl md:hidden flex flex-col items-center justify-center gap-1" style="background:color-mix(in srgb, var(--bg) 88%, transparent)">
+  <a href="#how"       class="display text-5xl font-semibold py-2" style="transition-delay:.05s">Platform</a>
+  <a href="#ecosystem" class="display text-5xl font-semibold py-2" style="transition-delay:.10s">Ecosystem</a>
+  <a href="#explore"   class="display text-5xl font-semibold py-2" style="transition-delay:.15s">Explore</a>
+  <a href="#faq"       class="display text-5xl font-semibold py-2" style="transition-delay:.20s">FAQ</a>
+  <a href="#join" class="mt-6 bg-orange text-white font-medium px-7 py-3 rounded-full" style="transition-delay:.25s">Join TourStack</a>
+</div>
+
+<main id="top">
+
+<!-- ============ HERO (centered, video bg) ============ -->
+<section class="relative min-h-[100dvh] flex items-center justify-center text-center overflow-hidden">
+  <video class="absolute inset-0 h-full w-full object-cover" autoplay muted loop playsinline
+         style="background:#0a0a0a">
+    <source src="ckrowd-tourstack/public/hero-main.mp4" type="video/mp4" />
+  </video>
+  <div class="absolute inset-0" style="background:radial-gradient(120% 90% at 50% 30%, rgba(0,0,0,.25), rgba(0,0,0,.78))"></div>
+
+  <div class="relative z-10 w-full max-w-4xl mx-auto px-5 pt-24">
+    <h1 class="reveal display uppercase text-[clamp(1.7rem,4.5vw,3.95rem)] font-semibold text-white" style="letter-spacing:-0.01em; line-height:1.04;">
+      The platform that makes<br>
+      African tours<br>
+      <span class="text-orange">financeable.</span>
+    </h1>
+    <p class="reveal mt-7 text-lg sm:text-xl text-white/80 max-w-2xl mx-auto leading-relaxed">
+      TourStack gives promoters, banks, insurers and artists the trust, compliance and data
+      to unlock live entertainment across the continent, turning tours into financeable assets.
+    </p>
+    <div class="reveal mt-9 flex flex-col sm:flex-row gap-3 justify-center">
+      <a href="#join" class="group press inline-flex items-center justify-center gap-2 bg-orange text-white font-medium pl-6 pr-2 py-3.5 rounded-full">
+        Get started
+        <span class="btn-ico h-8 w-8 rounded-full bg-black/15 grid place-items-center">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg>
+        </span>
+      </a>
+      <a href="#how" class="press inline-flex items-center justify-center gap-2 text-white font-medium px-6 py-3.5 rounded-full backdrop-blur-sm hover:bg-white/15 transition-colors" style="border:1px solid rgba(255,255,255,.25); background:rgba(255,255,255,.06)">
+        Become a certified promoter
+      </a>
+    </div>
+  </div>
+
+  <div class="absolute bottom-7 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 text-[10px] tracking-[.3em] uppercase text-white/55">
+    Scroll <span class="h-8 w-[1px] bg-gradient-to-b from-white/60 to-transparent"></span>
+  </div>
+</section>
+
+<!-- ============ TRUST ROW (real partners) ============ -->
+<section class="hair-b">
+  <div class="max-w-shell mx-auto px-6 sm:px-10 py-12 flex flex-col lg:flex-row items-center justify-between gap-8 reveal">
+    <p class="eyebrow text-muted shrink-0">Backed by Africa's banking &amp; insurance leaders</p>
+    <div class="flex items-center gap-10 sm:gap-14 flex-wrap justify-center">
+      <img src="ckrowd-tourstack/public/access-bank.png" alt="Access Bank" class="h-9 sm:h-10 w-auto object-contain opacity-90" />
+      <span class="hidden sm:block h-8 w-px" style="background:var(--hair)"></span>
+      <img src="ckrowd-tourstack/public/sanlam-allianz.png" alt="SanlamAllianz" class="h-8 sm:h-9 w-auto object-contain opacity-90" />
+    </div>
+  </div>
+</section>
+
+<!-- ============ STAT ROW (befesti §2: big numbers, asymmetric offsets, scroll counters) ============ -->
+<section class="py-20 sm:py-28 hair-b overflow-hidden">
+  <div class="max-w-shell mx-auto px-6 sm:px-10">
+    <div class="reveal flex flex-col md:flex-row md:items-end justify-between gap-5 mb-14">
+      <h2 class="display text-[clamp(1.9rem,4.5vw,3.2rem)] font-semibold max-w-md">The numbers behind the trust.</h2>
+      <p class="text-muted max-w-xs md:text-right">Real settlements, real markets, zero defaults. Proof that live entertainment is financeable.</p>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-x-10 gap-y-10" data-stagger>
+      <div class="reveal"><div class="mono text-[clamp(1.7rem,2.4vw,3rem)] font-semibold text-orange leading-none tabular-nums whitespace-nowrap"><span data-count="320" data-prefix="₦" data-suffix="M+"></span></div><div class="mt-4 pt-4 border-t text-[13px] text-muted" style="border-color:var(--border)">Payments facilitated</div></div>
+      <div class="reveal"><div class="mono text-[clamp(1.7rem,2.4vw,3rem)] font-semibold text-orange leading-none tabular-nums whitespace-nowrap"><span data-count="230" data-suffix="+"></span></div><div class="mt-4 pt-4 border-t text-[13px] text-muted" style="border-color:var(--border)">Promoter credit files</div></div>
+      <div class="reveal"><div class="mono text-[clamp(1.7rem,2.4vw,3rem)] font-semibold text-orange leading-none tabular-nums whitespace-nowrap"><span data-count="24" data-suffix="+"></span></div><div class="mt-4 pt-4 border-t text-[13px] text-muted" style="border-color:var(--border)">African markets</div></div>
+      <div class="reveal"><div class="mono text-[clamp(1.7rem,2.4vw,3rem)] font-semibold text-orange leading-none tabular-nums whitespace-nowrap"><span data-count="0"></span></div><div class="mt-4 pt-4 border-t text-[13px] text-muted" style="border-color:var(--border)">Defaults to date</div></div>
+      <div class="reveal"><div class="mono text-[clamp(1.7rem,2.4vw,3rem)] font-semibold text-orange leading-none tabular-nums whitespace-nowrap"><span data-count="500" data-suffix="+"></span></div><div class="mt-4 pt-4 border-t text-[13px] text-muted" style="border-color:var(--border)">Verified promoters</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ DUAL MARQUEE (befesti §3: opposing infinite tickers, seamless) ============ -->
+<section class="py-14 hair-b overflow-hidden space-y-7">
+  <div class="fade-x overflow-hidden">
+    <div class="marquee items-center">
+      <span class="ts-cities flex items-center shrink-0">
+        <span class="display text-2xl sm:text-4xl font-semibold px-7">Lagos</span><span class="h-1.5 w-1.5 rounded-full bg-orange"></span>
+        <span class="display text-2xl sm:text-4xl font-semibold px-7">Accra</span><span class="h-1.5 w-1.5 rounded-full bg-orange"></span>
+        <span class="display text-2xl sm:text-4xl font-semibold px-7">Nairobi</span><span class="h-1.5 w-1.5 rounded-full bg-orange"></span>
+        <span class="display text-2xl sm:text-4xl font-semibold px-7">Johannesburg</span><span class="h-1.5 w-1.5 rounded-full bg-orange"></span>
+        <span class="display text-2xl sm:text-4xl font-semibold px-7">Kigali</span><span class="h-1.5 w-1.5 rounded-full bg-orange"></span>
+        <span class="display text-2xl sm:text-4xl font-semibold px-7">Kampala</span><span class="h-1.5 w-1.5 rounded-full bg-orange"></span>
+        <span class="display text-2xl sm:text-4xl font-semibold px-7">Abidjan</span><span class="h-1.5 w-1.5 rounded-full bg-orange"></span>
+        <span class="display text-2xl sm:text-4xl font-semibold px-7">Dakar</span><span class="h-1.5 w-1.5 rounded-full bg-orange"></span>
+        <span class="display text-2xl sm:text-4xl font-semibold px-7">Cape Town</span><span class="h-1.5 w-1.5 rounded-full bg-orange"></span>
+        <span class="display text-2xl sm:text-4xl font-semibold px-7">Dar es Salaam</span><span class="h-1.5 w-1.5 rounded-full bg-orange"></span>
+      </span>
+    </div>
+  </div>
+  <div class="fade-x overflow-hidden">
+    <div class="marquee-rev items-center text-muted">
+      <span class="ts-roles flex items-center shrink-0">
+        <span class="text-lg sm:text-2xl px-7">Promoters</span><span class="text-orange/50">/</span>
+        <span class="text-lg sm:text-2xl px-7">Banks</span><span class="text-orange/50">/</span>
+        <span class="text-lg sm:text-2xl px-7">Insurers</span><span class="text-orange/50">/</span>
+        <span class="text-lg sm:text-2xl px-7">Artists</span><span class="text-orange/50">/</span>
+        <span class="text-lg sm:text-2xl px-7">Venues</span><span class="text-orange/50">/</span>
+        <span class="text-lg sm:text-2xl px-7">Service providers</span><span class="text-orange/50">/</span>
+        <span class="text-lg sm:text-2xl px-7">Agencies</span><span class="text-orange/50">/</span>
+        <span class="text-lg sm:text-2xl px-7">Sponsors</span><span class="text-orange/50">/</span>
+        <span class="text-lg sm:text-2xl px-7">Vendors</span><span class="text-orange/50">/</span>
+        <span class="text-lg sm:text-2xl px-7">Crews</span><span class="text-orange/50">/</span>
+      </span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ THE GAP (Spotify "Find your stage" alt layout) ============ -->
+<section class="py-24 sm:py-32 hair-b">
+  <div class="max-w-6xl mx-auto px-6 sm:px-10 grid lg:grid-cols-2 gap-14 items-center">
+    <div class="reveal reveal-l imgcard px-wrap order-2 lg:order-1 h-[28rem]">
+      <img src="ckrowd-tourstack/public/landing-market.jpg" alt="Aerial of a packed African concert" class="px-img" data-parallax="24" />
+      <div class="absolute inset-0" style="background:linear-gradient(to top, rgba(0,0,0,.6), transparent 60%)"></div>
+      <div class="absolute bottom-0 p-7 text-white"><div class="mono text-sm text-white/70">01 / The problem</div><div class="display text-2xl font-semibold mt-1">Bridging the divide</div></div>
+    </div>
+    <div class="reveal reveal-r order-1 lg:order-2">
+      <span class="eyebrow text-orange">The infrastructure gap</span>
+      <h2 class="display text-[clamp(1.9rem,4vw,3.1rem)] font-semibold mt-4"><span class="block whitespace-nowrap">Global demand.</span><span class="block whitespace-nowrap">Fragmented reality.</span></h2>
+      <p class="mt-6 text-lg text-muted max-w-xl">Appetite for African live entertainment has never been higher, yet executing cross-border tours stays opaque and uninsurable.</p>
+      <ul class="mt-8 space-y-5" data-stagger>
+        <li class="reveal flex items-center gap-4"><span class="shrink-0 h-9 w-9 rounded-full bg-orange/10 grid place-items-center text-orange"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg></span><p class="text-ink/80">No centralized compliance, so capital sees only risk.</p></li>
+        <li class="reveal flex items-center gap-4"><span class="shrink-0 h-9 w-9 rounded-full bg-orange/10 grid place-items-center text-orange"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20"/></svg></span><p class="text-ink/80">Untraceable cross-border payments deter institutions.</p></li>
+        <li class="reveal flex items-center gap-4"><span class="shrink-0 h-9 w-9 rounded-full bg-orange/10 grid place-items-center text-orange"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/></svg></span><p class="text-ink/80">No risk modeling, so tour insurance barely exists.</p></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ HOW IT WORKS (flat feature cards) ============ -->
+<section id="how" class="py-24 sm:py-32 hair-b">
+  <div class="max-w-shell mx-auto px-6 sm:px-10">
+    <div class="reveal max-w-2xl">
+      <span class="eyebrow text-orange">The platform</span>
+      <h2 class="display text-[clamp(2.1rem,5vw,3.8rem)] font-semibold mt-4">One operating<br>system for<br>live entertainment.</h2>
+      <p class="mt-5 text-lg text-muted">Institutional trust at every layer, from verification to settlement.</p>
+    </div>
+    <div class="mt-14 grid md:grid-cols-2 lg:grid-cols-3 gap-4" data-stagger>
+      <article class="reveal card p-7">
+        <span class="h-11 w-11 rounded-xl bg-orange/10 grid place-items-center text-orange"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m9 12 2 2 4-4"/><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/></svg></span>
+        <h3 class="display text-xl font-semibold mt-5">Verification</h3>
+        <p class="mt-2 text-muted text-[15px] leading-relaxed">KYC and AML verified profiles for promoters, a trusted registry the whole industry can underwrite against.</p>
+      </article>
+      <article class="reveal card p-7">
+        <span class="h-11 w-11 rounded-xl bg-orange/10 grid place-items-center text-orange"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6"/></svg></span>
+        <h3 class="display text-xl font-semibold mt-5">Escrow &amp; finance</h3>
+        <p class="mt-2 text-muted text-[15px] leading-relaxed">Secure escrow and milestone based smart contracts for safe capital deployment into tours.</p>
+      </article>
+      <article class="reveal card p-7">
+        <span class="h-11 w-11 rounded-xl bg-orange/10 grid place-items-center text-orange"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/></svg></span>
+        <h3 class="display text-xl font-semibold mt-5">Insurance</h3>
+        <p class="mt-2 text-muted text-[15px] leading-relaxed">Automated underwriting and risk modeling to procure event cancellation and non appearance cover.</p>
+      </article>
+      <article class="reveal card p-7">
+        <span class="h-11 w-11 rounded-xl bg-orange/10 grid place-items-center text-orange"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20Z"/></svg></span>
+        <h3 class="display text-xl font-semibold mt-5">Cross-border payments</h3>
+        <p class="mt-2 text-muted text-[15px] leading-relaxed">Compliant FX and multi currency payouts across 24+ African markets, fully traceable.</p>
+      </article>
+      <article class="reveal card p-7">
+        <span class="h-11 w-11 rounded-xl bg-orange/10 grid place-items-center text-orange"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 17h4V5H2v12h3m9 0h6v-5l-3-4h-3M5 17a2 2 0 1 0 4 0 2 2 0 0 0-4 0Zm10 0a2 2 0 1 0 4 0 2 2 0 0 0-4 0Z"/></svg></span>
+        <h3 class="display text-xl font-semibold mt-5">Service bidding</h3>
+        <p class="mt-2 text-muted text-[15px] leading-relaxed">Transparent procurement for production, logistics and on ground services with escrowed payouts.</p>
+      </article>
+      <article class="reveal card p-7">
+        <span class="h-11 w-11 rounded-xl bg-orange/10 grid place-items-center text-orange"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3v18h18M7 15l3-4 3 3 5-7"/></svg></span>
+        <h3 class="display text-xl font-semibold mt-5">Data &amp; reporting</h3>
+        <p class="mt-2 text-muted text-[15px] leading-relaxed">Real time financial reporting and auditable post tour settlements that compound into a moat.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CAPABILITIES (alternating image+text, Spotify category links) ============ -->
+<section id="capabilities" class="py-24 sm:py-32 hair-b">
+  <div class="max-w-6xl mx-auto px-6 sm:px-10 space-y-24 sm:space-y-32">
+
+    <div class="grid lg:grid-cols-2 gap-12 items-center">
+      <div class="reveal reveal-l">
+        <span class="eyebrow text-orange">Capital</span>
+        <h3 class="display text-[clamp(1.8rem,4vw,3rem)] font-semibold mt-4">Financing infrastructure.</h3>
+        <p class="mt-5 text-lg text-muted max-w-xl">We structure tours as standardized financial products. By controlling cash flow through smart escrow, TourStack mitigates the default risk that has kept lenders out of live events.</p>
+        <a href="#" class="group inline-flex items-center gap-2 mt-6 font-medium text-ink hover:text-orange transition-colors">Explore financing <svg class="btn-ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="m9 18 6-6-6-6"/></svg></a>
+      </div>
+      <div class="reveal reveal-r imgcard px-wrap h-[26rem]"><img src="ckrowd-tourstack/public/finance-dark.jpg" class="px-img" data-parallax="20" alt="Dark desk with live financial charts and trading screens"/></div>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-12 items-center">
+      <div class="reveal reveal-l imgcard px-wrap order-2 lg:order-1 h-[26rem]"><img src="ckrowd-tourstack/public/ctx-venue.jpg" class="px-img" data-parallax="20" alt="Empty arena being prepared for a show"/></div>
+      <div class="reveal reveal-r order-1 lg:order-2">
+        <span class="eyebrow text-orange">Cover</span>
+        <h3 class="display text-[clamp(1.8rem,4vw,3rem)] font-semibold mt-4">Insurance infrastructure.</h3>
+        <p class="mt-5 text-lg text-muted max-w-xl">For the first time, comprehensive event cancellation and non appearance insurance is accessible continent wide, powered by our proprietary risk dataset.</p>
+        <a href="#" class="group inline-flex items-center gap-2 mt-6 font-medium text-ink hover:text-orange transition-colors">Explore insurance <svg class="btn-ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="m9 18 6-6-6-6"/></svg></a>
+      </div>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-12 items-center">
+      <div class="reveal reveal-l">
+        <span class="eyebrow text-orange">Moat</span>
+        <h3 class="display text-[clamp(1.8rem,4vw,3rem)] font-semibold mt-4">Data creates the moat.</h3>
+        <p class="mt-5 text-lg text-muted max-w-xl">Every transaction, ticket scan and vendor payment flows through TourStack, the most comprehensive predictive dataset for African live entertainment profitability.</p>
+        <a href="#" class="group inline-flex items-center gap-2 mt-6 font-medium text-ink hover:text-orange transition-colors">See the data layer <svg class="btn-ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="m9 18 6-6-6-6"/></svg></a>
+      </div>
+      <div class="reveal reveal-r imgcard px-wrap h-[26rem]"><img src="ckrowd-tourstack/public/crowd-blue.jpg" class="px-img" data-parallax="20" alt="A vast crowd of fans lit blue at a live show"/></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ EXPLORE (scroll-pinned horizontal scroll) ============ -->
+<section id="explore" class="hpin relative hair-b">
+  <div class="hpin-sticky">
+    <div class="max-w-shell mx-auto w-full px-6 sm:px-10 mb-8 sm:mb-10 flex items-end justify-between gap-6">
+      <div class="reveal">
+        <span class="eyebrow text-orange">Go deeper</span>
+        <h2 class="display text-[clamp(2rem,5vw,3.6rem)] font-semibold mt-3">Built for every side<br>of the live economy.</h2>
+      </div>
+      <div class="hidden md:flex items-center gap-2 text-muted text-[12px] uppercase tracking-[.2em] reveal">Drag to scroll <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+    </div>
+    <div class="htrack px-6 sm:px-10">
+      <a href="#" class="hcard imgcard group h-[56vh] sm:h-[60vh]"><img src="ckrowd-tourstack/public/landing-promoter.jpg" class="absolute inset-0 h-full w-full object-cover" alt=""/><div class="absolute inset-0" style="background:linear-gradient(to top, rgba(0,0,0,.8), transparent 60%)"></div><div class="absolute top-5 left-5 mono text-white/60 text-sm">01</div><div class="absolute bottom-0 p-6 text-white"><div class="display text-2xl font-semibold">Promoters</div><div class="text-white/75 mt-1 flex items-center gap-1.5">Access institutional capital <svg class="btn-ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="m9 18 6-6-6-6"/></svg></div></div></a>
+      <a href="#" class="hcard imgcard group h-[56vh] sm:h-[60vh]"><img src="ckrowd-tourstack/public/landing-artist.jpg" class="absolute inset-0 h-full w-full object-cover" alt=""/><div class="absolute inset-0" style="background:linear-gradient(to top, rgba(0,0,0,.8), transparent 60%)"></div><div class="absolute top-5 left-5 mono text-white/60 text-sm">02</div><div class="absolute bottom-0 p-6 text-white"><div class="display text-2xl font-semibold">Artists</div><div class="text-white/75 mt-1 flex items-center gap-1.5">Protect your fees <svg class="btn-ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="m9 18 6-6-6-6"/></svg></div></div></a>
+      <a href="#" class="hcard imgcard group h-[56vh] sm:h-[60vh]"><img src="ckrowd-tourstack/public/concert-laser.jpg" class="absolute inset-0 h-full w-full object-cover" alt=""/><div class="absolute inset-0" style="background:linear-gradient(to top, rgba(0,0,0,.8), transparent 60%)"></div><div class="absolute top-5 left-5 mono text-white/60 text-sm">03</div><div class="absolute bottom-0 p-6 text-white"><div class="display text-2xl font-semibold">Financiers</div><div class="text-white/75 mt-1 flex items-center gap-1.5">Deploy capital safely <svg class="btn-ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="m9 18 6-6-6-6"/></svg></div></div></a>
+      <a href="#" class="hcard imgcard group h-[56vh] sm:h-[60vh]"><img src="ckrowd-tourstack/public/insurers-meeting.jpg" class="absolute inset-0 h-full w-full object-cover" alt=""/><div class="absolute inset-0" style="background:linear-gradient(to top, rgba(0,0,0,.8), transparent 60%)"></div><div class="absolute top-5 left-5 mono text-white/60 text-sm">04</div><div class="absolute bottom-0 p-6 text-white"><div class="display text-2xl font-semibold">Insurers</div><div class="text-white/75 mt-1 flex items-center gap-1.5">Underwrite with real data <svg class="btn-ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="m9 18 6-6-6-6"/></svg></div></div></a>
+      <a href="#" class="hcard imgcard group h-[56vh] sm:h-[60vh]"><img src="ckrowd-tourstack/public/festival-pyro.jpg" class="absolute inset-0 h-full w-full object-cover" alt=""/><div class="absolute inset-0" style="background:linear-gradient(to top, rgba(0,0,0,.8), transparent 60%)"></div><div class="absolute top-5 left-5 mono text-white/60 text-sm">05</div><div class="absolute bottom-0 p-6 text-white"><div class="display text-2xl font-semibold">Venues</div><div class="text-white/75 mt-1 flex items-center gap-1.5">Streamline deposits <svg class="btn-ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="m9 18 6-6-6-6"/></svg></div></div></a>
+      <a href="#" class="hcard imgcard group h-[56vh] sm:h-[60vh]"><img src="ckrowd-tourstack/public/production-drums.jpg" class="absolute inset-0 h-full w-full object-cover" alt=""/><div class="absolute inset-0" style="background:linear-gradient(to top, rgba(0,0,0,.8), transparent 60%)"></div><div class="absolute top-5 left-5 mono text-white/60 text-sm">06</div><div class="absolute bottom-0 p-6 text-white"><div class="display text-2xl font-semibold">Service providers</div><div class="text-white/75 mt-1 flex items-center gap-1.5">Win escrowed contracts <svg class="btn-ico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="m9 18 6-6-6-6"/></svg></div></div></a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PRINCIPLES (Spotify "The Bassline" 3-col) ============ -->
+<section id="ecosystem" class="py-24 sm:py-32 hair-b">
+  <div class="max-w-shell mx-auto px-6 sm:px-10">
+    <div class="reveal max-w-2xl mb-14">
+      <span class="eyebrow text-orange">What we stand on</span>
+      <h2 class="display text-[clamp(2.1rem,5vw,3.8rem)] font-semibold mt-4">Three principles.</h2>
+    </div>
+    <div class="grid md:grid-cols-3 gap-8" data-stagger>
+      <div class="reveal"><div class="mono text-orange text-sm">01</div><h4 class="display text-2xl font-semibold mt-3">Trust is infrastructure</h4><p class="mt-3 text-muted leading-relaxed">Compliance and verification are not paperwork. They are the rails that let capital flow into live events safely.</p></div>
+      <div class="reveal"><div class="mono text-orange text-sm">02</div><h4 class="display text-2xl font-semibold mt-3">Data over instinct</h4><p class="mt-3 text-muted leading-relaxed">Every settlement teaches the system. We price risk on evidence, not gut feel, so underwriting gets sharper each tour.</p></div>
+      <div class="reveal"><div class="mono text-orange text-sm">03</div><h4 class="display text-2xl font-semibold mt-3">Built for the continent</h4><p class="mt-3 text-muted leading-relaxed">Multi market, multi currency, locally compliant. Designed for how African live entertainment actually operates.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WORKFLOW (sticky heading + vertical timeline) ============ -->
+<section id="workflow" class="py-24 sm:py-32 hair-b">
+  <div class="max-w-shell mx-auto px-6 sm:px-10 grid lg:grid-cols-[0.82fr_1.18fr] gap-14 lg:gap-24">
+
+    <div class="reveal lg:sticky lg:top-28 lg:self-start">
+      <span class="eyebrow text-orange">Platform workflow</span>
+      <h2 class="display text-[clamp(2.1rem,5vw,3.8rem)] font-semibold mt-4">From discovery<br>to execution.</h2>
+      <p class="mt-6 text-muted text-lg max-w-sm">Four steps take a tour from announcement to a financier-ready decision, on a single rail.</p>
+    </div>
+
+    <ol class="relative" data-stagger>
+      <div class="absolute left-[26px] top-6 bottom-6 w-px" style="background:var(--border)"></div>
+
+      <li class="reveal relative flex gap-6 sm:gap-8 pb-14 last:pb-0">
+        <div class="shrink-0 relative z-10 h-[52px] w-[52px] rounded-full bg-orange text-white grid place-items-center mono text-[17px] font-semibold" style="box-shadow:0 0 0 7px var(--bg)">01</div>
+        <div class="pt-1">
+          <div class="eyebrow text-muted mb-2">Step 01</div>
+          <h3 class="display text-xl sm:text-2xl font-semibold">Ckrowd announces tour &amp; artistes</h3>
+          <p class="mt-3 text-muted leading-relaxed max-w-xl">Admin creates a Tour Project on TourStack, including artiste roster, fee range, availability dates, and technical requirements.</p>
+        </div>
+      </li>
+
+      <li class="reveal relative flex gap-6 sm:gap-8 pb-14 last:pb-0">
+        <div class="shrink-0 relative z-10 h-[52px] w-[52px] rounded-full bg-orange text-white grid place-items-center mono text-[17px] font-semibold" style="box-shadow:0 0 0 7px var(--bg)">02</div>
+        <div class="pt-1">
+          <div class="eyebrow text-muted mb-2">Step 02</div>
+          <h3 class="display text-xl sm:text-2xl font-semibold">Promoter submits Expression of Interest</h3>
+          <p class="mt-3 text-muted leading-relaxed max-w-xl">Promoters browse available artistes and tours, then submit a formal EOI with their venue, date, budget, and funding model.</p>
+        </div>
+      </li>
+
+      <li class="reveal relative flex gap-6 sm:gap-8 pb-14 last:pb-0">
+        <div class="shrink-0 relative z-10 h-[52px] w-[52px] rounded-full bg-orange text-white grid place-items-center mono text-[17px] font-semibold" style="box-shadow:0 0 0 7px var(--bg)">03</div>
+        <div class="pt-1">
+          <div class="eyebrow text-muted mb-2">Step 03</div>
+          <h3 class="display text-xl sm:text-2xl font-semibold">Matching &amp; review</h3>
+          <p class="mt-3 text-muted leading-relaxed max-w-xl">TourStack scores each EOI against artiste requirements. The Ckrowd team reviews flagged matches and makes informed decisions.</p>
+        </div>
+      </li>
+
+      <li class="reveal relative flex gap-6 sm:gap-8 pb-0 last:pb-0">
+        <div class="shrink-0 relative z-10 h-[52px] w-[52px] rounded-full bg-orange text-white grid place-items-center mono text-[17px] font-semibold" style="box-shadow:0 0 0 7px var(--bg)">04</div>
+        <div class="pt-1">
+          <div class="eyebrow text-muted mb-2">Step 04</div>
+          <h3 class="display text-xl sm:text-2xl font-semibold">Report &amp; decision</h3>
+          <p class="mt-3 text-muted leading-relaxed max-w-xl">The system generates a business summary, estimated revenue, costs, and risk notes, structured for financiers. Admin approves, rejects, or requests revision.</p>
+        </div>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- ============ WHY AFRICA (duotone callout) ============ -->
+<section class="relative py-28 sm:py-36 hair-b overflow-hidden">
+  <img src="ckrowd-tourstack/public/landing-hero.jpg" class="px-img" data-parallax="34" alt=""/>
+  <div class="absolute inset-0" style="background:linear-gradient(90deg, rgba(0,0,0,.92), rgba(0,0,0,.55) 60%, rgba(0,0,0,.3))"></div>
+  <div class="relative z-10 max-w-shell mx-auto px-6 sm:px-10">
+    <div class="max-w-2xl reveal text-white">
+      <h2 class="display text-[clamp(2.3rem,6vw,4.6rem)] font-semibold">Why Africa.<br><span class="text-orange">Why now.</span></h2>
+      <p class="mt-6 text-lg text-white/80">African music's global cultural export has reached record heights, yet domestic touring stays severely under monetized for lack of institutional scaffolding. The market is primed for consolidation.</p>
+      <div class="mt-10 flex flex-wrap gap-12" data-stagger>
+        <div class="reveal"><div class="mono text-4xl sm:text-5xl font-semibold text-orange"><span data-count="28" data-prefix="$" data-suffix="B"></span></div><div class="mt-2 eyebrow text-white/60">Addressable market</div></div>
+        <div class="reveal"><div class="mono text-4xl sm:text-5xl font-semibold text-orange"><span data-count="400" data-suffix="%"></span></div><div class="mt-2 eyebrow text-white/60">YoY genre growth</div></div>
+        <div class="reveal"><div class="mono text-4xl sm:text-5xl font-semibold text-orange"><span data-count="45" data-suffix="+"></span></div><div class="mt-2 eyebrow text-white/60">Markets in reach</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CTA BAND ============ -->
+<section id="join" class="py-24 sm:py-32">
+  <div class="max-w-shell mx-auto px-6 sm:px-10">
+    <div class="reveal relative overflow-hidden rounded-[32px] bg-orange text-white px-7 sm:px-16 py-16 sm:py-24 text-center">
+      <div class="absolute -top-24 -left-16 h-72 w-72 rounded-full bg-white/20 blur-3xl"></div>
+      <div class="absolute -bottom-24 -right-16 h-72 w-72 rounded-full bg-black/15 blur-3xl"></div>
+      <div class="relative max-w-3xl mx-auto">
+        <h2 class="display text-[clamp(2.1rem,5.5vw,4.2rem)] font-semibold">Ready to build the future of live entertainment?</h2>
+        <p class="mt-5 text-lg text-white/85">Join the infrastructure platform standardizing African touring.</p>
+        <div class="mt-9 flex flex-col sm:flex-row justify-center gap-3">
+          <a href="#" class="group press inline-flex items-center justify-center gap-2 bg-black text-white font-medium pl-6 pr-2 py-3.5 rounded-full">Get started today <span class="btn-ico h-8 w-8 rounded-full bg-white/15 grid place-items-center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"/></svg></span></a>
+          <a href="#" class="press inline-flex items-center justify-center gap-2 border-2 border-white/85 text-white font-medium px-6 py-3.5 rounded-full hover:bg-white hover:text-orange transition-colors">Contact sales</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section id="faq" class="pb-24 sm:pb-32">
+  <div class="max-w-3xl mx-auto px-6 sm:px-10">
+    <div class="reveal text-center mb-12">
+      <span class="eyebrow text-orange">Answers</span>
+      <h2 class="display text-[clamp(2rem,4.5vw,3.2rem)] font-semibold mt-4">Frequently asked questions</h2>
+    </div>
+    <div class="space-y-3" data-stagger>
+      <div class="faq reveal card">
+        <button class="w-full text-left p-6 flex justify-between items-center gap-4"><span class="display text-lg font-semibold">Who is TourStack for?</span><span class="chev shrink-0 text-orange"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></button>
+        <div class="faq-body"><div><p class="px-6 pb-6 text-muted leading-relaxed">TourStack is a B2B platform for the live-entertainment ecosystem: promoters, artists and managers, venues, financiers, insurers, vendors and service providers. Each stakeholder onboards, gets verified, and works on a single trusted rail.</p></div></div>
+      </div>
+      <div class="faq reveal card">
+        <button class="w-full text-left p-6 flex justify-between items-center gap-4"><span class="display text-lg font-semibold">How does financing and escrow work?</span><span class="chev shrink-0 text-orange"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></button>
+        <div class="faq-body"><div><p class="px-6 pb-6 text-muted leading-relaxed">We structure a tour as a financial product and hold capital with Tier 1 banking partners in our operating markets. Funds release against milestone based smart escrow, so disbursements trigger only when verified conditions are met.</p></div></div>
+      </div>
+      <div class="faq reveal card">
+        <button class="w-full text-left p-6 flex justify-between items-center gap-4"><span class="display text-lg font-semibold">How do I submit an Expression of Interest?</span><span class="chev shrink-0 text-orange"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></button>
+        <div class="faq-body"><div><p class="px-6 pb-6 text-muted leading-relaxed">Promoters browse available artists and tours, then submit an EOI with venue, date, budget and funding model. TourStack scores each EOI against the artiste requirements and our team reviews flagged matches before a decision is made.</p></div></div>
+      </div>
+      <div class="faq reveal card">
+        <button class="w-full text-left p-6 flex justify-between items-center gap-4"><span class="display text-lg font-semibold">How does insurance coverage work?</span><span class="chev shrink-0 text-orange"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></button>
+        <div class="faq-body"><div><p class="px-6 pb-6 text-muted leading-relaxed">Working with our insurance partners, we use automated underwriting and a proprietary risk dataset to procure event cancellation and non appearance cover, making comprehensive tour insurance accessible continent wide.</p></div></div>
+      </div>
+      <div class="faq reveal card">
+        <button class="w-full text-left p-6 flex justify-between items-center gap-4"><span class="display text-lg font-semibold">Which markets is TourStack active in?</span><span class="chev shrink-0 text-orange"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></button>
+        <div class="faq-body"><div><p class="px-6 pb-6 text-muted leading-relaxed">Full financial infrastructure in Nigeria, South Africa, Kenya, Ghana, Rwanda and Uganda, with expanding compliance coverage across 18+ additional African territories.</p></div></div>
+      </div>
+      <div class="faq reveal card">
+        <button class="w-full text-left p-6 flex justify-between items-center gap-4"><span class="display text-lg font-semibold">How is my data handled?</span><span class="chev shrink-0 text-orange"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></button>
+        <div class="faq-body"><div><p class="px-6 pb-6 text-muted leading-relaxed">We apply administrative, technical and organizational safeguards to protect your information, and we never sell personal data. See our <a href="privacy.html" class="text-orange hover:underline">Privacy Policy</a> and <a href="terms.html" class="text-orange hover:underline">Terms of Service</a> for full detail.</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="hair-b border-t pt-20 pb-10 overflow-hidden" style="border-color:var(--border)">
+  <div class="max-w-shell mx-auto px-6 sm:px-10">
+    <div class="grid md:grid-cols-5 gap-10 pb-16">
+      <div class="md:col-span-2">
+        <div class="flex items-center gap-2.5"><img src="ckrowd-tourstack/public/ckrowd-logo.png" alt="" class="h-8 w-8 object-contain"/><span class="flex flex-col leading-none"><span class="font-semibold text-[18px]">TourStack</span><span class="text-[10.5px] tracking-[.14em] uppercase text-muted mt-0.5">by Ckrowd</span></span></div>
+        <p class="mt-4 text-muted max-w-xs text-[15px]">Africa's financial infrastructure for live entertainment. Built for the continent's live economy.</p>
+      </div>
+      <div><div class="eyebrow text-muted mb-4">Platform</div><div class="flex flex-col gap-3 text-muted text-[15px]"><a href="#" class="hover:text-orange transition-colors">Verification</a><a href="#" class="hover:text-orange transition-colors">Financing</a><a href="#" class="hover:text-orange transition-colors">Insurance</a><a href="#" class="hover:text-orange transition-colors">Payments</a></div></div>
+      <div><div class="eyebrow text-muted mb-4">Company</div><div class="flex flex-col gap-3 text-muted text-[15px]"><a href="#ecosystem" class="hover:text-orange transition-colors">Ecosystem</a><a href="#workflow" class="hover:text-orange transition-colors">How it works</a><a href="#how" class="hover:text-orange transition-colors">Platform</a><a href="#" class="hover:text-orange transition-colors">Contact</a></div></div>
+      <div><div class="eyebrow text-muted mb-4">Legal</div><div class="flex flex-col gap-3 text-muted text-[15px]"><a href="privacy.html" class="hover:text-orange transition-colors">Privacy Policy</a><a href="terms.html" class="hover:text-orange transition-colors">Terms of Service</a></div></div>
+    </div>
+    <div class="display text-[clamp(3rem,15vw,12rem)] font-semibold leading-none select-none -mb-3" style="color:var(--hair)">TourStack</div>
+    <div class="border-t pt-6 flex flex-col sm:flex-row justify-between gap-3 text-[13px] text-muted" style="border-color:var(--border)">
+      <span>© 2026 Ckrowd · TourStack Infrastructure. All rights reserved.</span>
+      <span>Built for Africa's live economy.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js"></script>
+<script>
+  /* ---- theme ---- */
+  const root = document.documentElement;
+  const setTheme = (t) => {
+    root.classList.toggle("dark", t === "dark");
+    root.classList.toggle("light", t === "light");
+    document.querySelector(".ico-moon").classList.toggle("hidden", t === "light");
+    document.querySelector(".ico-sun").classList.toggle("hidden", t === "dark");
+    try { localStorage.setItem("ts-theme", t); } catch (e) {}
+  };
+  let saved; try { saved = localStorage.getItem("ts-theme"); } catch (e) {}
+  setTheme(saved || (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"));
+  document.getElementById("theme").addEventListener("click", () =>
+    setTheme(root.classList.contains("dark") ? "light" : "dark"));
+
+  /* ---- motion engine: Lenis smooth scroll + GSAP/ScrollTrigger ---- */
+  let lenis = null;
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const nav = document.getElementById("nav");
+  const revealAll = () => document.querySelectorAll(".reveal").forEach((el) => el.classList.add("in"));
+
+  if (reduce || !window.gsap || !window.ScrollTrigger) {
+    revealAll();
+    addEventListener("scroll", () => nav.classList.toggle("nav-solid", scrollY > 40), { passive: true });
+  } else {
+    gsap.registerPlugin(ScrollTrigger);
+
+    if (window.Lenis) {
+      lenis = new Lenis({ duration: 1.1, smoothWheel: true });
+      window.lenis = lenis;
+      lenis.on("scroll", ScrollTrigger.update);
+      gsap.ticker.add((t) => lenis.raf(t * 1000));
+      gsap.ticker.lagSmoothing(0);
+      document.querySelectorAll('a[href^="#"]').forEach((a) => {
+        a.addEventListener("click", (e) => {
+          const id = a.getAttribute("href");
+          if (id.length < 2) return;
+          const target = document.querySelector(id);
+          if (target) { e.preventDefault(); lenis.scrollTo(target, { offset: -80 }); }
+        });
+      });
+    }
+
+    ScrollTrigger.create({ start: 0, end: "max",
+      onUpdate: (self) => nav.classList.toggle("nav-solid", self.scroll() > 40) });
+
+    const fromVars = (el) =>
+      el.classList.contains("reveal-l") ? { opacity: 0, x: -56 } :
+      el.classList.contains("reveal-r") ? { opacity: 0, x: 56 } :
+      { opacity: 0, y: 26, filter: "blur(6px)" };
+
+    document.querySelectorAll("[data-stagger]").forEach((group) => {
+      gsap.fromTo(group.querySelectorAll(".reveal"),
+        { opacity: 0, y: 26, filter: "blur(6px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.8, ease: "power3.out",
+          stagger: 0.08, scrollTrigger: { trigger: group, start: "top 82%" } });
+    });
+    document.querySelectorAll(".reveal").forEach((el) => {
+      if (el.closest("[data-stagger]")) return;
+      gsap.fromTo(el, fromVars(el),
+        { opacity: 1, x: 0, y: 0, filter: "blur(0px)", duration: 0.85, ease: "power3.out",
+          scrollTrigger: { trigger: el, start: "top 85%" } });
+    });
+
+    document.querySelectorAll("[data-parallax]").forEach((img) => {
+      const amt = (+img.dataset.parallax || 20) * 0.35;
+      gsap.fromTo(img, { yPercent: -amt },
+        { yPercent: amt, ease: "none",
+          scrollTrigger: { trigger: img.parentElement, start: "top bottom", end: "bottom top", scrub: true } });
+    });
+
+    const sticky = document.querySelector(".hpin-sticky");
+    const track = document.querySelector(".htrack");
+    if (sticky && track && innerWidth > 768) {
+      const dist = () => Math.max(track.scrollWidth - innerWidth + 48, 0);
+      gsap.to(track, { x: () => -dist(), ease: "none",
+        scrollTrigger: { trigger: ".hpin", start: "top top", end: () => "+=" + dist(),
+          scrub: 1, pin: sticky, anticipatePin: 1, invalidateOnRefresh: true } });
+    }
+
+    addEventListener("load", () => ScrollTrigger.refresh());
+  }
+
+  /* ---- count-up ---- */
+  const countIO = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (!e.isIntersecting) return;
+      const el = e.target, target = +el.dataset.count, pre = el.dataset.prefix || "", suf = el.dataset.suffix || "", t0 = performance.now();
+      const tick = (t) => { const p = Math.min((t - t0) / 1400, 1), v = Math.round(target * (1 - Math.pow(1 - p, 3)));
+        el.textContent = pre + v.toLocaleString("en-US") + suf; if (p < 1) requestAnimationFrame(tick); };
+      requestAnimationFrame(tick); countIO.unobserve(el);
+    });
+  }, { threshold: 0.6 });
+  document.querySelectorAll("[data-count]").forEach((el) => countIO.observe(el));
+
+  /* ---- seamless marquees: clone groups until track always fills the viewport ---- */
+  document.querySelectorAll(".marquee, .marquee-rev").forEach((m) => {
+    const g = m.firstElementChild;
+    if (!g) return;
+    const gw = g.getBoundingClientRect().width || 1;
+    const copies = 2 * Math.max(1, Math.ceil(innerWidth / gw) + 1); // even count -> -50% lands seamlessly, each half >= viewport
+    const frag = document.createDocumentFragment();
+    for (let i = 1; i < copies; i++) { const c = g.cloneNode(true); c.setAttribute("aria-hidden", "true"); frag.appendChild(c); }
+    m.appendChild(frag);
+  });
+
+  /* ---- mobile menu ---- */
+  const burger = document.getElementById("burger"), overlay = document.getElementById("overlay");
+  const toggleMenu = (open) => {
+    burger.classList.toggle("x", open); overlay.classList.toggle("show", open);
+    overlay.classList.toggle("invisible", !open); overlay.classList.toggle("opacity-0", !open);
+    document.body.style.overflow = open ? "hidden" : "";
+    if (lenis) (open ? lenis.stop() : lenis.start());
+  };
+  burger.addEventListener("click", () => toggleMenu(!overlay.classList.contains("show")));
+  overlay.querySelectorAll("a").forEach((a) => a.addEventListener("click", () => toggleMenu(false)));
+
+  /* ---- FAQ ---- */
+  document.querySelectorAll(".faq").forEach((faq) => {
+    faq.querySelector("button").addEventListener("click", () => {
+      const open = faq.classList.contains("open");
+      document.querySelectorAll(".faq.open").forEach((f) => f.classList.remove("open"));
+      faq.classList.toggle("open", !open);
+    });
+  });
+</script>
+</body>
+</html>
