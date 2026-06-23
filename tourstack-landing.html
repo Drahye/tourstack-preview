@@ -98,11 +98,17 @@
   #nav{ transition:transform .5s var(--ease-out), background .4s ease, border-color .4s ease, box-shadow .4s ease; }
   .nav-solid{ background:color-mix(in srgb, var(--bg) 72%, transparent); backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
     box-shadow:0 16px 40px -28px rgba(0,0,0,.7); }
+  /* nav is transparent over the dark hero until solid: force light content for contrast */
+  #nav:not(.nav-solid):not(.menu-open){ color:#fff; border-color:rgba(255,255,255,.24); }
+  #nav:not(.nav-solid):not(.menu-open) .text-muted{ color:rgba(255,255,255,.74); }
+  #nav:not(.nav-solid):not(.menu-open) #theme,
+  #nav:not(.nav-solid):not(.menu-open) #burger{ border-color:rgba(255,255,255,.30); }
+  #nav:not(.nav-solid):not(.menu-open) #burger span{ background:#fff; }
 
   #burger span{ transition:transform .4s var(--ease-out), opacity .3s ease; }
-  #burger.x span:nth-child(1){ transform:translateY(5px) rotate(45deg); }
+  #burger.x span:nth-child(1){ transform:translateY(5.5px) rotate(45deg); }
   #burger.x span:nth-child(2){ opacity:0; }
-  #burger.x span:nth-child(3){ transform:translateY(-5px) rotate(-45deg); }
+  #burger.x span:nth-child(3){ transform:translateY(-5.5px) rotate(-45deg); }
   #overlay{ transition:opacity .5s var(--ease-out), visibility .5s; }
   #overlay a{ opacity:0; transform:translateY(26px); transition:opacity .6s var(--ease-out), transform .6s var(--ease-out); }
   #overlay.show a{ opacity:1; transform:none; }
@@ -175,10 +181,10 @@
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg>
         </span>
       </a>
-      <button id="burger" class="md:hidden h-9 w-9 grid place-items-center gap-[5px] rounded-full hair" aria-label="Menu">
-        <span class="block h-[1.5px] w-4 bg-ink"></span>
-        <span class="block h-[1.5px] w-4 bg-ink"></span>
-        <span class="block h-[1.5px] w-4 bg-ink"></span>
+      <button id="burger" class="md:hidden h-9 w-9 grid place-items-center gap-[4px] rounded-full hair" aria-label="Menu">
+        <span class="block h-[1.5px] w-[15px] bg-ink"></span>
+        <span class="block h-[1.5px] w-[15px] bg-ink"></span>
+        <span class="block h-[1.5px] w-[15px] bg-ink"></span>
       </button>
     </div>
   </nav>
@@ -690,6 +696,7 @@
   const burger = document.getElementById("burger"), overlay = document.getElementById("overlay");
   const toggleMenu = (open) => {
     burger.classList.toggle("x", open); overlay.classList.toggle("show", open);
+    nav.classList.toggle("menu-open", open);
     overlay.classList.toggle("invisible", !open); overlay.classList.toggle("opacity-0", !open);
     document.body.style.overflow = open ? "hidden" : "";
     if (lenis) (open ? lenis.stop() : lenis.start());
