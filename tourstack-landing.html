@@ -48,7 +48,7 @@
     --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
     --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
   }
-  html{ scroll-behavior:smooth; }
+  html{ scroll-behavior:smooth; overflow-x:clip; scrollbar-gutter:stable; }
   body{ background:var(--bg); color:var(--text); transition:background .5s ease, color .5s ease;
     overflow-x:clip; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; }
   ::selection{ background:#FF5A30; color:#fff; }
@@ -106,9 +106,9 @@
   #nav:not(.nav-solid):not(.menu-open) #burger span{ background:#fff; }
 
   #burger span{ transition:transform .4s var(--ease-out), opacity .3s ease; }
-  #burger.x span:nth-child(1){ transform:translateY(5.5px) rotate(45deg); }
+  #burger.x span:nth-child(1){ transform:translateY(4.5px) rotate(45deg); }
   #burger.x span:nth-child(2){ opacity:0; }
-  #burger.x span:nth-child(3){ transform:translateY(-5.5px) rotate(-45deg); }
+  #burger.x span:nth-child(3){ transform:translateY(-4.5px) rotate(-45deg); }
   #overlay{ transition:opacity .5s var(--ease-out), visibility .5s; }
   #overlay a{ opacity:0; transform:translateY(26px); transition:opacity .6s var(--ease-out), transform .6s var(--ease-out); }
   #overlay.show a{ opacity:1; transform:none; }
@@ -181,10 +181,10 @@
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg>
         </span>
       </a>
-      <button id="burger" class="md:hidden h-9 w-9 grid place-items-center gap-[4px] rounded-full hair" aria-label="Menu">
-        <span class="block h-[1.5px] w-[15px] bg-ink"></span>
-        <span class="block h-[1.5px] w-[15px] bg-ink"></span>
-        <span class="block h-[1.5px] w-[15px] bg-ink"></span>
+      <button id="burger" class="md:hidden h-9 w-9 grid place-items-center gap-[3px] rounded-full hair" aria-label="Menu">
+        <span class="block h-[1.5px] w-[14px] bg-ink"></span>
+        <span class="block h-[1.5px] w-[14px] bg-ink"></span>
+        <span class="block h-[1.5px] w-[14px] bg-ink"></span>
       </button>
     </div>
   </nav>
